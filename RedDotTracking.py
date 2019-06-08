@@ -21,18 +21,21 @@ class RedDotTracking():
 
         # split off the red channel
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        mask = cv2.blur(hsv, (10, 10))
-        mask = cv2.inRange(mask, (150, 150, 100), (180, 255, 255))
-        # mask2 = cv2.inRange(mask, (0, 0, 225), (180, 10, 255))
+        mask = hsv
+        mask = cv2.blur(mask, (10, 10))
+        mask1a = cv2.inRange(mask, (150, 150, 100), (180, 255, 255))
+        # mask1b = cv2.inRange(mask, (0, 150, 100), (20, 255, 255))
+        # mask1 = cv2.bitwise_or(mask1a, mask1b)
+        mask2 = cv2.inRange(mask, (0, 0, 225), (180, 255, 255))
 
         ## Merge the mask and crop the red regions
-        # mask = cv2.bitwise_or(mask1, mask2)
+        mask = cv2.bitwise_or(mask1a, mask2)
 
         # kernel = np.ones((2, 2), np.uint8)
         # mask = cv2.erode(mask, kernel, iterations=2)
         # mask = cv2.dilate(mask, kernel, iterations=2)
 
-        img[np.where(mask == 0)] = 0
+        # img[np.where(mask == 0)] = 0
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0]
         cnts = list(filter(lambda contour: len(contour) > 10, cnts))
